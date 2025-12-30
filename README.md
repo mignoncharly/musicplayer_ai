@@ -43,7 +43,7 @@ A production-grade, offline-first desktop music player with AI-powered features 
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/musicplayer_ai.git
+   git clone https://github.com/mignoncharly/musicplayer_ai.git
    cd musicplayer_ai
    ```
 
