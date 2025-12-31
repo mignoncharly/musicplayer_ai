@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download - AI Music Player</title>
+    <meta name="description" content="Download AI Music Player for Windows. Free, offline-first music player with AI-powered features.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #0ea5e9;
+            --success: #22c55e;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --gray: #64748b;
+            --gray-light: #94a3b8;
+            --light: #f1f5f9;
+            --white: #ffffff;
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--dark);
+            color: var(--white);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            padding: 1rem 2rem;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .back-link {
+            color: var(--gray-light);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--white);
+        }
+
+        /* Main Content */
+        .download-page {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .download-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .download-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .download-header p {
+            color: var(--gray-light);
+            font-size: 1.125rem;
+        }
+
+        /* Download Card */
+        .download-card {
+            background: var(--dark-light);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .download-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .download-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .download-details h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .download-meta {
+            display: flex;
+            gap: 1.5rem;
+            color: var(--gray-light);
+            font-size: 0.875rem;
+        }
+
+        .download-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Download Button */
+        .download-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 1.25rem 2rem;
+            background: var(--gradient);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .download-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .download-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Progress Container */
+        .progress-container {
+            display: none;
+            margin-top: 2rem;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .progress-status {
+            font-weight: 500;
+        }
+
+        .progress-percent {
+            color: var(--primary-light);
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.75rem;
+            font-size: 0.875rem;
+            color: var(--gray-light);
+        }
+
+        /* Download Complete */
+        .download-complete {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            margin-top: 2rem;
+        }
+
+        .download-complete.active {
+            display: block;
+        }
+
+        .download-complete-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.75rem;
+        }
+
+        .download-complete h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--success);
+        }
+
+        .download-complete p {
+            color: var(--gray-light);
+        }
+
+        /* Installation Instructions */
+        .instructions {
+            background: var(--dark-light);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .instructions h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .steps {
+            list-style: none;
+        }
+
+        .step {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .step-content p {
+            color: var(--gray-light);
+            font-size: 0.95rem;
+        }
+
+        /* System Requirements */
+        .requirements {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .requirements h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-light);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .requirements-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--gray-light);
+        }
+
+        .requirement-icon {
+            color: var(--success);
+        }
+
+        /* Alternative Downloads */
+        .alternatives {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .alternatives p {
+            color: var(--gray);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .alt-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .alt-links a {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .alt-links a:hover {
+            color: var(--white);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .download-page {
+                padding: 2rem 1rem;
+            }
+
+            .download-card {
+                padding: 1.5rem;
+            }
+
+            .download-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .download-meta {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .requirements-list {
+                grid-template-columns: 1fr;
+            }
+
+            .alt-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">🎵</div>
+                AI Music Player
+            </a>
+            <a href="index.html" class="back-link">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+                </svg>
+                Back to Home
+            </a>
+        </div>
+    </nav>
+
+    <!-- Download Page Content -->
+    <main class="download-page">
+        <div class="download-header">
+            <h1>Download AI Music Player</h1>
+            <p>Get the latest version for Windows. Free, no registration required.</p>
+        </div>
+
+        <!-- Download Card -->
+        <div class="download-card">
+            <div class="download-info">
+                <div class="download-icon">🎵</div>
+                <div class="download-details">
+                    <h2>AI Music Player for Windows</h2>
+                    <div class="download-meta">
+                        <span>
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm11 1H6v8l4-2 4 2V6z" clip-rule="evenodd"/>
+                            </svg>
+                            Version 1.0.0
+                        </span>
+                        <span>
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/>
+                            </svg>
+                            ~150 MB
+                        </span>
+                        <span>
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            Windows 10/11 
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="download-btn" id="downloadBtn" onclick="startDownload()">
+                <svg fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 3a1 1 0 011 1v7.586l2.293-2.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 11.586V4a1 1 0 011-1z"/>
+                    <path d="M3 15a1 1 0 011 1v1h12v-1a1 1 0 112 0v1a2 2 0 01-2 2H4a2 2 0 01-2-2v-1a1 1 0 011-1z"/>
+                </svg>
+                Download Installer (.exe)
+            </button>
+
+            <!-- Progress Indicator -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-header">
+                    <span class="progress-status" id="progressStatus">Preparing download...</span>
+                    <span class="progress-percent" id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-details">
+                    <span id="downloadedSize">0 MB</span>
+                    <span id="downloadSpeed">Calculating...</span>
+                </div>
+            </div>
+
+            <!-- Download Complete -->
+            <div class="download-complete" id="downloadComplete">
+                <div class="download-complete-icon">✓</div>
+                <h3>Download Complete!</h3>
+                <p>Your download should start automatically. If not, <a href="#" id="manualDownload" style="color: var(--primary-light);">click here</a>.</p>
+            </div>
+        </div>
+
+        <!-- Installation Instructions -->
+        <div class="instructions">
+            <h3>📋 Installation Instructions</h3>
+            <ol class="steps">
+                <li class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Run the Installer</h4>
+                        <p>Locate the downloaded file (AIMusicPlayer-Setup.exe) and double-click to run it. If Windows SmartScreen appears, click "More info" then "Run anyway".</p>
+                    </div>
+                </li>
+                <li class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Follow the Setup Wizard</h4>
+                        <p>Click "Next" to proceed through the installation. You can choose a custom install location or use the default (recommended).</p>
+                    </div>
+                </li>
+                <li class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Complete Installation</h4>
+                        <p>Click "Install" and wait for the process to complete. This may take a few minutes depending on your system.</p>
+                    </div>
+                </li>
+                <li class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Launch the App</h4>
+                        <p>Once installed, you can launch AI Music Player from the Start Menu or Desktop shortcut. Import your music folder to get started!</p>
+                    </div>
+                </li>
+            </ol>
+
+            <div class="requirements">
+                <h4>System Requirements</h4>
+                <div class="requirements-list">
+                    <div class="requirement">
+                        <span class="requirement-icon">✓</span>
+                        Windows 10 or Windows 11
+                    </div>
+                    <div class="requirement">
+                        <span class="requirement-icon">✓</span>
+                        4 GB RAM minimum
+                    </div>
+                    <div class="requirement">
+                        <span class="requirement-icon">✓</span>
+                        500 MB free disk space
+                    </div>
+                    <div class="requirement">
+                        <span class="requirement-icon">✓</span>
+                        64-bit processor
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alternative Downloads -->
+        <div class="alternatives">
+            <p>Looking for something else?</p>
+            <div class="alt-links">
+                <a href="https://github.com/mignoncharly/musicplayer_ai/releases" target="_blank">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.477 0 10c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V19c0 .27.16.59.67.5C17.14 18.16 20 14.42 20 10A10 10 0 0010 0z" clip-rule="evenodd"/>
+                    </svg>
+                    View all releases on GitHub
+                </a>
+                <a href="https://github.com/mignoncharly/musicplayer_ai" target="_blank">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                    Build from source
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Simulated download with progress indicator
+        // In production, this would link to your actual installer file
+
+        const DOWNLOAD_URL = 'https://github.com/mignoncharly/musicplayer_ai/releases/latest/download/AIMusicPlayer-Setup.exe';
+        const FILE_SIZE_MB = 150;
+
+        function startDownload() {
+            const btn = document.getElementById('downloadBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressFill = document.getElementById('progressFill');
+            const progressPercent = document.getElementById('progressPercent');
+            const progressStatus = document.getElementById('progressStatus');
+            const downloadedSize = document.getElementById('downloadedSize');
+            const downloadSpeed = document.getElementById('downloadSpeed');
+            const downloadComplete = document.getElementById('downloadComplete');
+
+            // Disable button
+            btn.disabled = true;
+            btn.innerHTML = `
+                <svg class="animate-spin" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" opacity="0.25"></circle>
+                    <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+                Downloading...
+            `;
+
+            // Show progress
+            progressContainer.classList.add('active');
+
+            // Simulate download progress
+            let progress = 0;
+            const startTime = Date.now();
+
+            const interval = setInterval(() => {
+                // Simulate varying download speed
+                const increment = Math.random() * 5 + 2;
+                progress = Math.min(progress + increment, 100);
+
+                // Update UI
+                progressFill.style.width = progress + '%';
+                progressPercent.textContent = Math.round(progress) + '%';
+
+                const downloaded = (progress / 100) * FILE_SIZE_MB;
+                downloadedSize.textContent = downloaded.toFixed(1) + ' MB / ' + FILE_SIZE_MB + ' MB';
+
+                const elapsed = (Date.now() - startTime) / 1000;
+                const speed = downloaded / elapsed;
+                downloadSpeed.textContent = speed.toFixed(1) + ' MB/s';
+
+                if (progress < 30) {
+                    progressStatus.textContent = 'Connecting to server...';
+                } else if (progress < 70) {
+                    progressStatus.textContent = 'Downloading installer...';
+                } else if (progress < 95) {
+                    progressStatus.textContent = 'Almost there...';
+                } else {
+                    progressStatus.textContent = 'Finalizing...';
+                }
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    completeDownload();
+                }
+            }, 200);
+
+            // Start actual download after a short delay
+            setTimeout(() => {
+                // Create hidden link and trigger download
+                const link = document.createElement('a');
+                link.href = DOWNLOAD_URL;
+                link.download = 'AIMusicPlayer-Setup.exe';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, 1000);
+        }
+
+        function completeDownload() {
+            const progressContainer = document.getElementById('progressContainer');
+            const downloadComplete = document.getElementById('downloadComplete');
+            const btn = document.getElementById('downloadBtn');
+
+            progressContainer.style.display = 'none';
+            downloadComplete.classList.add('active');
+
+            btn.disabled = false;
+            btn.innerHTML = `
+                <svg fill="currentColor" viewBox="0 0 20 20" width="24" height="24">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                Download Complete
+            `;
+            btn.style.background = 'linear-gradient(135deg, #22c55e 0%, #14b8a6 100%)';
+
+            // Setup manual download link
+            document.getElementById('manualDownload').href = DOWNLOAD_URL;
+        }
+
+        // Add spinning animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+            .animate-spin {
+                animation: spin 1s linear infinite;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
